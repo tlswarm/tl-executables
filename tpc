@@ -1,0 +1,4 @@
+#!/bin/bash
+sshbot $1
+docker exec -it swarmbot /bin/bash
+roslaunch safety point_cloud_throttle.launch

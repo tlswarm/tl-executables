@@ -1,0 +1,12 @@
+ padded_hex=$1
+
+	if [[ ${#padded_hex} > 0 ]] && [[ ${#padded_hex} -le $2 ]] ; then
+		while (( ${#padded_hex} < $2 )); do
+			padded_hex="0$padded_hex"
+		done
+	else
+		 padded_hex=-1
+		return
+	fi
+
+	echo $padded_hex

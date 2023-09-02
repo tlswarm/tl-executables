@@ -1,0 +1,11 @@
+#!/bin/bash
+
+	 args=""
+	while [[ $# -gt 0 ]]; do
+		key="$1"
+		if [[ ${key:0:1} == "-" ]]; then
+			 args="$args $key"
+		fi
+		shift
+	done
+	echo $args

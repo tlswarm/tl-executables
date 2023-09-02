@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Function to calculate the result
+calculate_result() {
+  local current=$1
+  result=$(bc -l <<< "scale=5; (($current - 4000) / 16000) * 0.25 / 100")
+  echo $result
+}
+
+# Read up to 20 current values
+read_values() {
+  local counter=1
+  local values=()
+  while [[ $counter -le 20 ]]; do
+    read -p "Enter current value (or press Enter to finish): " value
+    if [[ -z $value ]]; then
+      break
+    fi
+    values+=("$value")
+    counter=$((counter + 1))
+  done
+  echo "${values[@]}"
+}
+
+# Main script
+values_array=($(read_values))
+if [[ ${#values_array[@]} -eq 0 ]]; then
+  echo "No values entered. Exiting."
+  exit 1
+fi
+
+echo "Results:"
+for value in "${values_array[@]}"; do
+  result=$(calculate_result "$value")
+  echo "$result"
+done
+

@@ -1,0 +1,32 @@
+#!/bin/bash
+    case "$1" in
+
+        canlog | can | can_log)
+            echo "/var/log/swarmfarm/swarmbot/can_logs/"
+            ;;
+        cmn | common)
+            echo "/var/lib/swarmfarm/swarmbot/swarmbotCommon"
+            ;;
+        config)
+            echo "/etc/swarmfarm/swarmbot/"
+            ;;
+        home)
+            echo "/home/$current_user/"
+            ;;
+        bag)
+            echo "/var/log/swarmfarm/swarmbot/bagfiles/"
+            ;;
+        attach | attachment | acfg | aconfig)
+            echo "/etc/swarmfarm/can-utils/"
+            ;;
+        workedareas | wa)
+            echo "/var/log/swarmfarm/swarmbot/workedAreas/"
+            ;;
+        paths | p)
+            echo "/var/lib/swarmfarm/swarmbot/planner/"
+            ;;
+        *)
+            echo "$1"
+            ;;
+
+    esac

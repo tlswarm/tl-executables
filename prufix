@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Help menu function
+function display_help {
+    echo "Usage: $0 SOURCE DESTINATION PREFIX_OR_SUFFIX"
+    echo "Copies files and directories from SOURCE to DESTINATION and adds a prefix or suffix."
+    echo "Arguments:"
+    echo "  SOURCE: The source directory to copy from."
+    echo "  DESTINATION: The destination directory to copy to."
+    echo "  PREFIX_OR_SUFFIX: The prefix or suffix to add to the copied files and directories."
+    echo "Example: $0 /path/to/source /path/to/destination -p"
+}
+
+# Check if the number of arguments is correct
+if [ "$#" -ne 3 ]; then
+    echo "Error: Incorrect number of arguments."
+    display_help
+    exit 1
+fi
+
+# Check if the source directory exists
+if [ ! -d "$1" ]; then
+    echo "Error: Source directory does not exist."
+    exit 1
+fi
+
+# Check if the destination directory exists
+if [ ! -d "$2" ]; then
+    echo "Error: Destination directory does not exist."
+    exit 1
+fi
+
+# Remove any spaces from the prefix or suffix
+PREFIX_OR_SUFFIX=$(echo "$3" | tr -d ' ')
+
+# Copy files and directories from source to destination with prefix or suffix
+cp -R "$1"/* "$2"/"$PREFIX_OR_SUFFIX"_"$1"_"$PREFIX_OR_SUFFIX"
+
+echo "Files and directories copied successfully with prefix/suffix."

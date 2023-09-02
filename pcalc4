@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Check if at least one argument is provided
+if [ $# -eq 0 ]; then
+    echo "No arguments provided. Please provide at least one current value."
+    exit 1
+fi
+
+# Loop through the provided arguments
+for current in "$@"; do
+    # Calculate the result using the equation
+    result=$(awk -v c="$current" 'BEGIN { printf "%.5f", ((c-4000)/16000)*0.25 }')
+    
+    # Multiply the result by 100000
+    multiplied_result=$(awk -v r="$result" 'BEGIN { printf "%.5f", r * 1000000 }')
+    
+    # Display the result
+    echo $multiplied_result
+done
+

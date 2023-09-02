@@ -1,0 +1,6 @@
+#!/bin/bash
+##rac to robot and open rviz
+ros-access-client -f 172.22.38.169 $(getrobotname $1) 
+source ~/swarmbot4/swarmbot_ws/devel/setup.bash;
+rviz
+

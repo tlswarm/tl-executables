@@ -1,0 +1,9 @@
+#!/bin/bash
+	 args=$(get_args $@)
+	 nonargs=$(clear_args $@)
+
+	set -- $nonargs
+
+	 path=$(get_dir $2)
+	 	echo "rsync --progress $3 $(getrobotstring $1 $args):$path"
+			rsync --progress $3 $($username"@v-"$1.swarmfarm.com):$path

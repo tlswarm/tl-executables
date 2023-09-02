@@ -1,0 +1,4 @@
+#!/bin/bash
+source /etc/profile.d/swarmfarm-ros-access-client.sh
+	#ros-access-client $(getrobotname $1)
+	ros-access-client -f 172.22.38.169 $1

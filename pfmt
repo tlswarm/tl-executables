@@ -1,0 +1,2 @@
+#Forward robot router to port 4444
+ssh -L 4444:192.168.88.1:80 $(getrobotstring $1 $args)

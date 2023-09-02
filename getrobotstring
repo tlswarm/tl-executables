@@ -1,0 +1,118 @@
+#!/bin/bash
+#Defaults
+	 xenial=0
+	 vpn="v-" #Change to "" to have vpn off by default
+
+	if [ -z $1 ]; then
+
+		echo "No robot specified!"
+		return
+	elif ! ([[ $1 == '-h' ]] || [[ $1 == '--help' ]] || [[ $1 == '--forward-help' ]] || [[ $1 == '--forward-ip-help' ]]); then
+
+		 robot=$1
+		shift
+	fi
+	POSITIONAL=()
+	while [[ $# -gt 0 ]]; do
+		key=$1
+		case $key in
+
+		-x | --xenial)
+			 xenial=1
+			shift
+			;;
+		-f | --focal)
+			 xenial=0
+			shift
+			;;
+		-i | --ip_only)
+			 ip=1
+			shift
+			;;
+		-v | --vpn)
+			 vpn="v-"
+			shift
+			;;
+		-l | --)
+			 vpn=""
+			shift
+			;;
+		-r | --ros)
+			 ros="-ros"
+			shift
+			;;
+		-n | --fullname)
+			 fullname=1
+			shift
+			;;
+		-s | --slave)
+			 slave="-slave"
+			shift
+			;;
+		-h | --help)
+			echo "\
+-h | --help		: show this message
+-x | --xenial 		: forces to login as swarmbot@
+-f | --focal		: forces to login as <current_user@>
+-i | --ip_only		: returns only the address of the robot not anything@
+-v | --vpn		: forces \"v-\" in front of the address
+-l | --		: forces the address to be the  address
+-r | --ros		: forces the address to have \"-ros\" on the end of it
+-n | --fullname 	: uses the full qualified name you give
+-s | --slave		: adds -slave to the name
+--forward-help		: returns the help message with this line and the top line removed"
+			return
+			shift
+			;;
+		--forward-help)
+			echo "\
+-x | --xenial 		: forces to login as swarmbot@
+-f | --focal		: forces to login as <current_user@>
+-i | --ip_only		: returns only the address of the robot not anything@
+-v | --vpn		: forces \"v-\" in front of the address
+-l | --		: forces the address to be the  address
+-r | --ros		: forces the address to have \"-ros\" on the end of it
+-n | --fullname 	: uses the full qualified name you give
+-s | --slave		: adds -slave to the name"
+			return
+			shift
+			;;
+		--forward-ip-help)
+			echo "\
+-v | --vpn		: forces \"v-\" in front of the address
+-l | --		: forces the address to be the  address
+-r | --ros		: forces the address to have \"-ros\" on the end of it
+-n | --fullname 	: uses the full qualified name you give
+-s | --slave		: adds -slave to the name"
+			return
+			shift
+			;;
+		*)
+			shift
+			;;
+		esac
+	done
+	set -- "${POSITIONAL[@]}" # restore positional parameters
+
+	if ! [ -z $vpn ] && ! [ -z $ros ]; then
+		echo "*** You can't have both 'vpn' and 'ros' set. NOTE: vpn could be on by default, use \"-l\" to do the  address"
+		return
+	fi
+
+	if [[ $fullname == 1 ]]; then
+		name=$robot
+	else
+		name=$(getrobotname $robot)
+	fi
+
+	if [ -z $ip ]; then
+
+		if ! [[ $xenial == 1 ]]; then
+			echo "$current_user@$vpn$name$ros$slave.swarmfarm.com"
+		else
+			echo "swarmbot@$vpn$name$ros$slave.swarmfarm.com"
+		fi
+	else
+
+		echo "$vpn$name$ros$slave.swarmfarm.com"
+	fi

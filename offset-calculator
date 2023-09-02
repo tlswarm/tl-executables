@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# Check if both CSV file and input directory are provided
+if [ "$#" -ne 2 ]; then
+  echo "Usage: $0 <csv_file> <input_directory>"
+  exit 1
+fi
+
+csv_file="$1"
+input_directory="$2"
+
+# Read CSV file and process each line
+while IFS= read -r line; do
+  # Skip the CSV header
+  if [[ "$line" =~ ^,Lat ]]; then
+    continue
+  fi
+
+  # Extract latitude and longitude from CSV line
+  lat_dms=$(echo "$line" | awk -F',' '{print $2}')
+  long_dms=$(echo "$line" | awk -F',' '{print $4}')
+
+  # Convert latitude and longitude from DMS to decimal degrees
+  lat_dec=$(echo "$lat_dms" | awk -F' ' '{print $1 + $2/60 + $3/3600}')
+  long_dec=$(echo "$long_dms" | awk -F' ' '{print $1 + $2/60 + $3/3600}')
+
+  # Find corresponding GeoJSON file
+  offset=$(echo "$line" | awk -F',' '{print $1}')
+  geojson_file="${input_directory}/${offset}.geojson"
+
+  # Check if GeoJSON file exists
+  if [ ! -f "$geojson_file" ]; then
+    echo "GeoJSON file not found: $geojson_file"
+    continue
+  fi
+
+  # Extract latitude and longitude from GeoJSON file
+  geojson_lat=$(jq -r '.features[0].geometry.coordinates[1]' "$geojson_file")
+  geojson_long=$(jq -r '.features[0].geometry.coordinates[0]' "$geojson_file")
+
+  # Calculate distance between CSV and GeoJSON coordinates
+  distance=$(awk -v lat_dec="$lat_dec" -v long_dec="$long_dec" -v geojson_lat="$geojson_lat" -v geojson_long="$geojson_long" '{
+    dx = lat_dec - geojson_lat
+    dy = long_dec - geojson_long
+    dist = sqrt(dx*dx + dy*dy)
+    printf "%.2f\n", dist
+  }')
+
+  # Accumulate the total offset distance
+  total_distance=$(awk -v total_distance="$total_distance" -v distance="$distance" 'BEGIN{ printf "%.2f\n", total_distance + distance }')
+  counter=$((counter + 1))
+done < "$csv_file"
+
+# Calculate the average offset distance
+if [ "$counter" -gt 0 ]; then
+  average_distance=$(awk -v total_distance="$total_distance" -v counter="$counter" 'BEGIN{ printf "%.2f\n", total_distance / counter }')
+  echo "Average offset distance: $average_distance meters"
+else
+  echo "No valid entries found in the CSV file."
+fi

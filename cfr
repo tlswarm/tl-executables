@@ -1,0 +1,13 @@
+#!/bin/bash
+##rsync -> copy robot path file localdir
+
+	 args=$(get_args $@)
+	 nonargs=$(clear_args $@)
+
+	set -- $nonargs
+
+	 path=$(get_dir $2)
+
+	echo "rsync --compress --progress $(getrobotstring $1 $args):$path$3 $4"
+	rsync --progress $(getrobotstring $1 $args):$path$3 $4 --partial
+

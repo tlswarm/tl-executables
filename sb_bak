@@ -1,0 +1,26 @@
+#!/bin/bash
+	 pre='thomas.lambert@'
+	while [[ $# -gt 0 ]]
+	do
+	key="$1"
+	case $key in
+
+		-p|--port-forward)
+			 pf="-D 1081 "
+			shift
+			;;
+		-h|--help)
+			echo "\
+-h | --help		: show this message
+-p | --port-forward	: will add \"-D 1081\" to add port forwarding
+$(getrobotstring --forward-help)"
+			return
+			;;
+		*)
+			shift
+			;;
+	esac
+	done
+
+	echo "ssh $pf$(getrobotstring $pre)"
+	ssh $pf$(getrobotstring $pre)

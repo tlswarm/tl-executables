@@ -1,0 +1,52 @@
+#!/bin/bash
+
+	command=$1
+	if ! ( [[ $command == '-h' ]] || [[ $command == '--help' ]] ); then
+		shift
+	else
+		help=1
+	fi
+
+	pre=$@
+	POSITIONAL=()
+	while [[ $# -gt 0 ]]
+	do
+	key="$1"
+	case $key in
+		-i|--ip_only)
+			ip_only=1
+			shift
+			;;
+		-h|--help)
+			help=1
+			shift
+			;;
+		*)
+			shift
+			;;
+	esac
+	done
+	set -- "${POSITIONAL[@]}" # restore positional parameters
+
+	if ! [ -z $help ]; then
+
+		if [ -z $ip_only ]; then
+
+			echo "$(getrobotstring --forward-help)"
+		else
+
+			echo "$(getrobotstring --forward-ip-help)"
+		fi
+		return
+	fi
+
+	resp=$(getrobotstring $pre)
+
+	if [[ ${resp:0:1} == '*' ]]; then
+		echo "$resp"
+		return
+	fi
+
+	echo "$command $(getrobotstring $pre)"
+	$command $(getrobotstring $pre)
+

@@ -1,0 +1,61 @@
+#!/bin/bash
+
+function show_help {
+    echo "Usage: $(basename $0) robot_id minutes timestamp dest_host subdirectory_name"
+    echo
+    echo "Options:"
+    echo "  -h, --help          Show this help message and exit."
+    echo
+    echo "Description:"
+    echo "  This script finds all files modified between start and end time stamps"
+    echo "  in the specified directory and its subdirectories, creates a compressed"
+    echo "  tar archive, and rsync transfers it to the specified destination host."
+    echo
+    echo "Arguments:"
+    echo "  robot_id            ID of the robot to retrieve data from"
+    echo "  minutes             Number of minutes before/after the specified timestamp"
+    echo "  timestamp           Timestamp in the format 'YYYY-MM-DD HH:MM:SS'"
+    echo "  ssh_user            SSH user for the destination host"
+    echo "  dest_host           Destination host name or IP address"
+    echo "  subdirectory_name   Name of the subdirectory to create in the destination path"
+    echo
+    exit 0
+}
+
+# Check if the --help flag is present
+if [[ "$1" == "--help" || "$1" == "-h" ]]; then
+    show_help
+fi
+
+# Parse command-line arguments
+robot_id=$1
+minutes=$2
+timestamp=$3
+filename=$(echo $timestamp | tr -cd [:digit:])
+source_dir=/var/log/swarmfarm/swarmbot
+out_file=$filename.tar
+dest_dir=/var/log/swarmfarm/swarmbot/sb$robot_id
+
+
+sb $robot_id << EOF
+# Calculate start and end time stamps
+start=$(date -d "$timestamp - $minutes minutes" +%Y%m%d%H%M.%S)
+end=$(date -d "$timestamp + $minutes minutes" +%Y%m%d%H%M.%S)
+
+cd ~/
+[ -d "/home/thomas.lambert/logs" ] && cd /home/thomas.lambert/logs/ || mkdir /home/thomas.lambert/logs/
+
+find $source_dir -type f -newermt "$start" ! -newermt "$end" | tar czvf - -T - > $filename.tar
+            exit
+EOF
+
+# Check if the destination directory exists and create it if it doesn't
+cd ~/
+[ -d "/home/thomas.lambert/robots/sb$1" ] && cd /home/thomas.lambert/robots/sb$1 || mkdir /home/thomas.lambert/robots/sb$1
+
+# Rsync the tar archive to the destination host
+cfr $1 home logs/$filename.tar /home/thomas.lambert/robots/sb$1 
+
+cd /home/thomas.lambert/robots/sb$1
+
+tar -xzvf /home/thomas.lambert/robots/sb$1/$filename.tar

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Function to calculate and display the result
+calculate_result() {
+  # Applying the equation and rounding the result to five decimal places
+  result=$(awk "BEGIN {printf \"%.5f\", (($1 - 4000) / 16000) * 0.25}")
+
+  # Dividing the result by 100
+  result=$(awk "BEGIN {printf \"%.5f\", $result / 10}")
+
+  # Displaying the result
+  echo "$result"
+}
+
+# Loop through the arguments and calculate/display the result for each
+for current in "$@"; do
+  calculate_result "$current"
+done
+

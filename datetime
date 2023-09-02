@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Get input from the first argument
+input=$1
+
+# Extract individual date and time components
+hour=${input:0:2}
+minute=${input:2:2}
+day=${input:4:2}
+month=${input:6:2}
+year=${input:8:2}
+
+# Convert 2-digit year to 4-digit year
+if [[ $year -ge 21 ]]; then
+  year="20$year"
+else
+  year="19$year"
+fi
+
+# Combine components into new date and time format
+new_date="${year}-${month}-${day}"
+new_time="${hour}:${minute}"
+new_datetime="${new_date} ${new_time}"
+
+# Print new date and time
+#echo "New date and time: \"$new_datetime\""
+

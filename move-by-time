@@ -1,0 +1,92 @@
+#!/bin/bash
+
+# Function to display usage information
+usage() {
+    echo "Usage: $0 [OPTIONS]"
+    echo "Move files within a given time frame."
+    echo
+    echo "Options:"
+    echo "  -t, --timestamp <timestamp>    Specify the reference timestamp in the format 'YYYY-MM-DD HH:MM'."
+    echo "                                 If not provided, the current local time will be used."
+    echo "  -f, --timeframe <timeframe>    Specify the time frame followed by 'h' for hours or 'm' for minutes."
+    echo "                                 For example, '24h' for 24 hours, '60m' for 60 minutes, etc."
+    echo "  -s, --source <source_folder>   Specify the source folder where files will be checked."
+    echo "                                 If not provided, the current directory will be used."
+    echo "  -d, --destination <destination> Specify the destination directory where files will be moved."
+    echo "  --help                         Display this help information."
+    echo
+}
+
+# Set default values
+timestamp=$(date +"%Y-%m-%d %H:%M")
+timeframe=""
+source_folder="."
+destination=""
+
+# Parse the arguments using flags
+while [[ $# -gt 0 ]]; do
+    key="$1"
+
+    case $key in
+    -t | --timestamp)
+        timestamp="$2"
+        shift
+        shift
+        ;;
+    -f | --timeframe)
+        timeframe="$2"
+        shift
+        shift
+        ;;
+    -s | --source)
+        source_folder="$2"
+        shift
+        shift
+        ;;
+    -d | --destination)
+        destination="$2"
+        shift
+        shift
+        ;;
+    --help)
+        usage
+        exit 0
+        ;;
+    *) # unknown option
+        usage
+        exit 1
+        ;;
+    esac
+done
+
+# Check if the destination folder is provided
+if [ -z "$destination" ]; then
+    echo "Destination folder is required."
+    exit 1
+fi
+
+# Convert the timestamp to epoch time for comparison
+epoch_time=$(date -d "$timestamp" +"%s")
+
+# Calculate the time range based on the timeframe
+if [[ $timeframe == *h* ]]; then
+    hours="${timeframe//[^0-9]/}"
+    start_time=$(date -d "$hours hours ago" +"%s")
+elif [[ $timeframe == *m* ]]; then
+    minutes="${timeframe//[^0-9]/}"
+    start_time=$(date -d "$minutes minutes ago" +"%s")
+else
+    echo "Invalid timeframe. Please specify hours (h) or minutes (m)."
+    exit 1
+fi
+
+# Move files within the given time range from the source folder to the destination directory
+for file in "$source_folder"/*; do
+    if [ -f "$file" ]; then
+        file_time=$(stat -c "%Y" "$file")
+        if [ "$file_time" -ge "$start_time" ] && [ "$file_time" -le "$epoch_time" ]; then
+            mv "$file" "$destination"
+            echo "Moved file: $file"
+        fi
+    fi
+done

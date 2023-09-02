@@ -1,0 +1,2 @@
+#!/bin/bash
+ssh -D 1081 thomas.lambert@v-$(getrobotname $1).swarmfarm.com

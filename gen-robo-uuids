@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for i in {68..100}
+do
+  uuid=$(uuidgen)
+  echo "    sb-00$(printf %02d $i):" >> output.txt
+  echo "      legacy_name: 'sb00$(printf %02d $i)'" >> output.txt
+  echo "      uuid: '$uuid'" >> output.txt
+done

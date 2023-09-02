@@ -1,0 +1,2 @@
+#!/bin/bash
+sudo vi /etc/swarmfarm/can-utils/can_messages.json

@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Function to calculate the result
+calculate_result() {
+  current=$1
+  result=$(bc -l <<< "scale=5; (($current-4000)/16000)*0.25")
+  echo $result
+}
+
+# Prompt user for current values
+echo "Enter up to 20 current values (separated by spaces):"
+read -r input
+
+# Convert input string to an array
+IFS=' ' read -ra current_values <<< "$input"
+
+# Display the results
+echo "Results:"
+for current in "${current_values[@]}"; do
+  result=$(calculate_result $current)
+  echo $result
+done
+

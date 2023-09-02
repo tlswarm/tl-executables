@@ -1,0 +1,27 @@
+#!/bin/bash
+
+TMP=$(find ~/Traversals/tests/$1/ -name "*.csv*" >>list.dat)
+
+
+for f in list.dat; do
+
+  # handle case where no files exist
+  [[ -e "$f" ]] || continue
+  # read each given file
+  while read -r line; do
+    if [[ -e "$line" ]]; then
+      if [ -f "$line" ]; then
+      	echo "log_to_eval.py -i" $line
+        log_to_eval.py -i $line 
+        echo "log_to_eval.py -i $line "
+        rm "$line"
+        echo "removed" $line
+      else
+        echo "not a regular file -- skipped"
+      fi
+    else
+      echo "complete"
+    fi
+  done <"$f"
+  rm list.dat
+done

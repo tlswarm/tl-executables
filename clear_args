@@ -1,0 +1,10 @@
+#!/bin/bash
+ nonargs=""
+	while [[ $# -gt 0 ]]; do
+		key="$1"
+		if ! [[ ${key:0:1} == "-" ]]; then
+			 nonargs="$nonargs $key"
+		fi
+		shift
+	done
+	echo $nonargs

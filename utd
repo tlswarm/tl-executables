@@ -1,0 +1,6 @@
+#!/bin/bash
+
+### ensure time and date is correct
+echo "syncing time/date"
+wsl.exe -d ubuntu -u root -- ntpdate time.windows.com > /dev/null
+echo "time/date synced"

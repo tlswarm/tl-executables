@@ -1,0 +1,2 @@
+#!/bin/bash
+source ~/swarmbot4/swarmbot_ws/devel/setup.bash; rosrun job_maintainer job_maintainer_paddock_tester_node $1 ~/swarmbotCommon/PaddockDefinitions/

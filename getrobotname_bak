@@ -1,0 +1,27 @@
+#regex numcheck gets number 
+     re='^[0-9]+$'
+        if [[ $1 =~ $re ]]; then
+
+		         is_num=$1
+			#length lt 2 apply no num
+				elif [[ ${#1} < 2 ]]; then
+
+							 num=""
+							#just 
+								elif  ! [[ ${1:1:1} =~ $re ]]; then
+											 num=""
+												else
+															num=${1:1:1}
+																fi
+																	
+																	if [ -n "$is_num" ]; then
+																			
+																			    echo "sb-$(padnum $1 4)"
+																			    	else
+																						    ascii="$(printf '%d' "'${1:0:1}'")"
+																						    	    sb_num=$(( $ascii - 94 ))
+																							    	    if [ -n "$num" ]; then
+																									    	        sb_num=$(($(( $(($num - 1)) * 26 )) + $sb_num ))
+																												    fi
+																												    	    echo "sb-$(padnum $sb_num 4)"
+																													    	fi

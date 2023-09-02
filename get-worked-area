@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Function to display the script's usage
+function show_usage {
+  echo "Usage: $0 <robot-number> <ticket-number>"
+  echo "  <robot-number>: A numeric argument"
+  echo "  <ticket-number>: A ticket number"
+  exit 1
+}
+
+# Check if the --help option is provided
+if [ "$1" == "--help" ]; then
+  show_usage
+fi
+
+# Check if the correct number of arguments are provided
+if [ $# -ne 2 ]; then
+  echo "Error: Invalid number of arguments."
+  show_usage
+fi
+
+robot_number="$1"
+ticket_number="$2"
+
+# Get the current date and time in the specified format
+date_time=$(date +'%Y-%m-%d_%H:%M:%S' | tr ':' '-')
+
+# Construct the directory path
+log_dir="$HOME/logs/sb-00$robot_number/$ticket_number/$date_time"
+
+# Check if the directory exists
+if [ -d "$log_dir" ]; then
+  echo "Directory '$log_dir' already exists."
+else
+  # Create the directory if it doesn't exist
+  mkdir -p "$log_dir"
+  echo "Directory '$log_dir' created."
+fi
+
+# Change into the directory
+cd "$log_dir" || exit 1
+
+# You are now in the specified directory
+echo "Entered directory: $PWD"
+
+ rosservice call /SwarmbotGeometriesHandler/area_distributor/write_worked_areas_to_file "{}"
+
+ swarmfarm-copy-from-robot $robot_number * -d wa
+
+

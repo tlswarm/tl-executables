@@ -1,0 +1,11 @@
+#!/bin/bash
+path="/home/thomas.lambert/swarmbotCommon/PaddockDefinitions/"
+
+    for farm in "$path*"; do
+        for paddock in $farm/*; do
+            
+            echo "$paddock
+            "
+            cat "$paddock/greenArea.geojson" | jq '.properties = {}' > "$paddock/ga_new" && rm "$paddock/greenArea.geojson" && mv "$paddock/ga_new" "$paddock/greenArea.geojson"
+        done
+    done

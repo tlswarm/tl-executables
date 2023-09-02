@@ -1,0 +1,8 @@
+#!/bin/bash
+sfros $(getrobotname $1)
+
+    source ~/swarmbot4/swarmbot_ws/devel/setup.bash
+
+    rosservice call /SwarmbotGeometriesHandler/area_distributor/write_worked_areas_to_file "{}"
+
+    copy-func $(getrobotname $1) wa * .

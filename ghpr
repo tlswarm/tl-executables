@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+
+current_branch="$(git branch --show-current)"
+
+if [ "$current_branch" == "production" ]; then
+    >&2 echo "Still on production you wang"
+    exit 1
+fi
+
+git push origin "$current_branch"
+
+gh pr create --head "$current_branch" --fill

@@ -1,0 +1,5 @@
+#!/bin/bash
+rm -r ~/Traversals/Models/*
+	echo "cleared models"
+	
+	swarmfarm-model-generation-client -p ~/swarmbotCommon/PaddockDefinitions -v ~/Traversals/Models/ ~/swarmfarm-planning/planning/config/config.json -n $(( $(grep -c ^processor /proc/cpuinfo) - 1 ))
